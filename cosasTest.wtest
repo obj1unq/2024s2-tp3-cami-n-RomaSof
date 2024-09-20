@@ -1,0 +1,39 @@
+import cosas.*
+
+describe "cosas" {
+  test "bumblebee" {
+    
+    assert.equals(30, bumblebee.nivelPeligrosidad())
+
+    bumblebee.estaTransformado(false)
+
+    assert.equals(15, bumblebee.nivelPeligrosidad())
+  }
+
+  test "bateriaAntiaerea" {
+    
+    assert.equals(100, bateriaAntiaerea.nivelPeligrosidad() )
+
+    bateriaAntiaerea.estaConMisiles(false)
+
+    assert.equals(0, bateriaAntiaerea.nivelPeligrosidad() )
+  }
+
+  test "contenedorPortuario" {
+    
+    contenedorPortuario.agregar(paqueteDeLadrillos)
+    contenedorPortuario.agregar(arenaAGranel)
+
+    assert.equals(paqueteDeLadrillos, contenedorPortuario.cosaMasPeligrosa())
+    assert.equals(2, contenedorPortuario.nivelPeligrosidad())
+    assert.equals(12, contenedorPortuario.pesoTotalCarga())
+
+  }
+
+  test "embalajeDeSeguridad" {
+    
+    assert.equals(100, embalajeDeSeguridad.peso())
+    assert.equals(100, embalajeDeSeguridad.nivelPeligrosidad())
+
+  }
+}
