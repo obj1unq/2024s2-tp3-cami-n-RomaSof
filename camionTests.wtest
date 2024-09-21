@@ -59,13 +59,21 @@ describe "camion" {
 
   }
 
-  test "trasporte" {
+  test "trasporte no puede" {
     
     camion.cargar(bumblebee)
     camion.cargar(knightRider)
     almacen.almacenar(#{arenaAGranel})
     
     assert.throwsException({ camion.transportar(almacen, ruta9) })
+  }
+
+  test "transporte si puede" {
+    camion.cargar(bumblebee) //2
+    almacen.almacenar(#{arenaAGranel}) //1
+    camion.transportar(almacen, caminosVecinales)
+
+    assert.equals(0, almacen.cantidadDeBultosDisponible())
   }
 
 }

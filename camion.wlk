@@ -14,7 +14,7 @@ object camion {
 	}
 
 	method todoPesoPar() {
-	  return cosas.all({cosa => self.esPar(cosa.peso())})
+	  return  not cosas.isEmpty() and cosas.all({cosa => self.esPar(cosa.peso())})
 	}
 
 	method esPar(numero) {
@@ -22,10 +22,11 @@ object camion {
 	}
 
 	method hayAlgunoQuePesa(peso) {
-	  return cosas.any({cosa => cosa.peso() == peso})
+	  return not cosas.isEmpty() and cosas.any({cosa => cosa.peso() == peso})
 	}
 
 	method elDeNivel(nivel) {
+		//no se si validarlo para que no falle
 	  return cosas.find({cosa => cosa.nivelPeligrosidad() == nivel})
 	}
 
@@ -38,15 +39,16 @@ object camion {
 	}
 
 	method pesoTotalCarga(){
+		//aca también fallaría si le pasan una lista vacia, validar?
 		return cosas.sum({cosa => cosa.peso()})
 		
 	/*
 		var peso = 0
-	cosas.forEach({cosa => peso = peso + cosa.peso()})
-	return peso -> estaría mal porque hay una consulta ?
+		cosas.forEach({cosa => peso = peso + cosa.peso()})
+		return peso -> estaría mal porque hay una consulta ?
 	*/
 	/*
-	return cosas.map({cosa => cosa.peso()}).sum() -> otra forma de hacerlo que no estaría mal creo
+		return cosas.map({cosa => cosa.peso()}).sum() -> otra forma de hacerlo que no estaría mal creo
 	*/
 	}
 
