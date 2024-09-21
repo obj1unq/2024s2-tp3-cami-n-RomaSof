@@ -5,7 +5,7 @@ object camion {
 		
 	method cargar(unaCosa) {
 		cosas.add(unaCosa)
-		//cosas.forEach({cosa => cosa.cambio()})
+		//cosas.forEach({cosa => cosa.cambio()}) -> estaría bien usar un foreach acá porque NO hay consulta y es solo accion?
 		unaCosa.cambio()
 	} 
 
@@ -38,13 +38,16 @@ object camion {
 	}
 
 	method pesoTotalCarga(){
+		return cosas.sum({cosa => cosa.peso()})
+		
+	/*
 		var peso = 0
-		cosas.forEach({cosa => peso = peso + cosa.peso()})
-	  return peso
-
-	  /*
-	  return cosas.map({cosa => cosa.peso()}).sum()
-	  */
+	cosas.forEach({cosa => peso = peso + cosa.peso()})
+	return peso -> estaría mal porque hay una consulta ?
+	*/
+	/*
+	return cosas.map({cosa => cosa.peso()}).sum() -> otra forma de hacerlo que no estaría mal creo
+	*/
 	}
 
 	method excedidoDePeso() {
@@ -119,7 +122,7 @@ object almacen {
   var property cantidadDeBultosDisponible = 3 //como en el ejemplo
 
   method almacenar(cosas, bultoCosas) {
-	self.validarAlmacenar(cosas, bultoCosas)
+	self.validarAlmacenar(cosas, bultoCosas) //por si otra cosa que no sea el camion intenta almacenar cosas conviene por ahora tener una validación en el almacen también
 	cosasAlmacenadas.addAll(cosas)
 	cantidadDeBultosDisponible = cantidadDeBultosDisponible - bultoCosas
   }

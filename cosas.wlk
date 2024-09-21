@@ -58,13 +58,10 @@ object contenedorPortuario {
   method pesoTotal() { return 100 + self.pesoTotalCarga() }
 
 	method pesoTotalCarga(){
-		var peso = 0
-		cosas.forEach({cosa => peso = peso + cosa.peso()})
-	  return peso
-
-	  /*
-	  return cosas.map({cosa => cosa.peso()}).sum()
-	  */
+		return cosas.sum({cosa => cosa.peso()})
+	/*
+	return cosas.map({cosa => cosa.peso()}).sum()
+	*/
 	}
 	method nivelPeligrosidad() {
 	  return if(cosas.isEmpty()){ 0 } else self.cosaMasPeligrosa().nivelPeligrosidad()
@@ -79,7 +76,7 @@ object contenedorPortuario {
 	}
 
 	method cambio() { 
-		cosas.forEach({cosa => cosa.cambio()})
+		cosas.forEach({cosa => cosa.cambio()}) //acá estaría bien? es una accion sobre todos los elementos y sin consulta
 	 }
 }
 
