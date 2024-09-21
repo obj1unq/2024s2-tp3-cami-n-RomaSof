@@ -59,5 +59,14 @@ describe "camion" {
 
   }
 
+  test "trasporte" {
+    
+    camion.cargar(bumblebee)
+    camion.cargar(knightRider)
+    almacen.almacenar(#{arenaAGranel})
+    
+    assert.throwsException({ camion.transportar(almacen, ruta9) })
+  }
+
 }
 

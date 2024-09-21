@@ -100,19 +100,19 @@ object camion {
 	}
 
 	//transporte
-	method transportar(destino, camino){ //, nivelMaximoPeligrosidad) 
-	  self.valirdarTransportar(destino, camino)// , nivelMaximoPeligrosidad)
-	  destino.almacenar(cosas, self.totalBultos())
+	method transportar(destino, camino){ 
+	  self.valirdarTransportar(destino, camino)
+	  destino.almacenar(cosas)
 	}
 
-	method valirdarTransportar(destino, camino, nivelMaximoPeligrosidad){
-	  if( not self.puedePasarPor(camino /*, nivelMaximoPeligrosidad*/)  and not self.sePuedeAlmacenarEn(destino) ) {
-		self.error("no se puede almacenar la carga en" + destino)
+	method valirdarTransportar(destino, camino){
+	  if( not self.puedePasarPor(camino)  and not self.sePuedeAlmacenarEn(destino) ) {
+		self.error("no se puede valir el transporte")
 	   }
 	}
 
-	method puedePasarPor(camino) { //, nivelMaximoPeligrosidad) 
-		return camino.dejaCircular(self.puedeCircularEnRuta(camino.nivelPeligrosidad() /*nivelMaximoPeligrosidad*/), self.pesoTotal())
+	method puedePasarPor(camino) {
+		return camino.dejaCircular(self)
 	}
 
 	method sePuedeAlmacenarEn(destino) {
@@ -125,21 +125,25 @@ object almacen {
   const property cosasAlmacenadas = #{}
   var property cantidadDeBultosDisponible = 3 //como en el ejemplo
 
-  method almacenar(cosas, bultoCosas) {
-	self.validarAlmacenar(cosas, bultoCosas) //por si otra cosa que no sea el camion intenta almacenar cosas conviene por ahora tener una validación en el almacen también
+  method almacenar(cosas) {
+	self.validarAlmacenar(cosas) //por si otra cosa que no sea el camion intenta almacenar cosas conviene por ahora tener una validación en el almacen también
 	cosasAlmacenadas.addAll(cosas)
-	cantidadDeBultosDisponible = cantidadDeBultosDisponible - bultoCosas
+	cantidadDeBultosDisponible = cantidadDeBultosDisponible - self.bultosOcupaCosas(cosas)
   }
 
-  method validarAlmacenar(cosas, bultoCosas){
+  method validarAlmacenar(cosas){
 	return 
-	if(not self.sePuedeAlmacenar(cosas, bultoCosas)){
+	if(not self.sePuedeAlmacenar(cosas)){
 		self.error("no hay suficiente espacio para almacenar" + cosas)
 	}
   }
 
-  method sePuedeAlmacenar(cosas, bultoCosas) {
-	return cantidadDeBultosDisponible >= bultoCosas
+  method sePuedeAlmacenar(cosas) {
+	return cantidadDeBultosDisponible >= self.bultosOcupaCosas(cosas)
+  }
+
+  method bultosOcupaCosas(cosas) {
+	return cosas.sum({cosa => cosa.bultos()})
   }
 
 }
@@ -147,15 +151,15 @@ object almacen {
 object ruta9 {
   method nivelPeligrosidad() { return 11 }
   method pesoMaximoSoportable() { return 2500 }
-  method dejaCircular(esCamionSeguro, pesoCamion) {
-	return esCamionSeguro
+  method dejaCircular(transporte) {
+	return transporte.puedeCircularEnRuta(self.nivelPeligrosidad())
   }
 }
 
 object caminosVecinales {
 	var property pesoMaximoSoportable = 2500
   method nivelPeligrosidad() { return 0 } //asumo que es cero porque no dice la consigna y quiero mantener el polimorfismo
-  method dejaCircular(esCamionSeguro, pesoCamion) {
-	return pesoCamion <= pesoMaximoSoportable
+  method dejaCircular(transporte) {
+	return transporte.pesoTotal() <= pesoMaximoSoportable
   }
 }
