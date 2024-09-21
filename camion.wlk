@@ -5,6 +5,7 @@ object camion {
 		
 	method cargar(unaCosa) {
 		cosas.add(unaCosa)
+		//cosas.forEach({cosa => cosa.cambio()})
 		unaCosa.cambio()
 	} 
 

@@ -4,28 +4,30 @@ import camion.*
 describe "camion" {
   test "cargas y pesos" {
 
-    camion.cargar(knightRider) //peso 500 peli 10
-    camion.cargar(bumblebee) //peso 800 peli 30
-    camion.cargar(arenaAGranel) //peso 2 peli 1
+    camion.cargar(knightRider) //peso 500 
+    camion.cargar(arenaAGranel) //peso 22
+
+    assert.equals(500, knightRider.peso())
+    assert.equals(22, arenaAGranel.peso())
 
     assert.that(camion.todoPesoPar())
     assert.that(camion.hayAlgunoQuePesa(500))
     assert.notThat(camion.hayAlgunoQuePesa(5))
-    assert.equals(2302, camion.pesoTotal())
-    assert.equals(1302, camion.pesoTotalCarga())
+    assert.equals(1522, camion.pesoTotal())
+    assert.equals(522, camion.pesoTotalCarga())
     assert.notThat(camion.excedidoDePeso())
 
     //agregados
-    assert.that(camion.tieneAlgoQuePesaEntre(1, 4))
-    assert.equals(bumblebee, camion.cosaMasPesada())
-    assert.equals(#{500, 800, 2}, camion.pesos()) //set
+    assert.that(camion.tieneAlgoQuePesaEntre(1, 25))
+    assert.equals(knightRider, camion.cosaMasPesada())
+    assert.equals(#{500, 22}, camion.pesos()) //set
   }
 
   test "cargas y niveles de peligrosidad" {
     
-    camion.cargar(knightRider) //peso 500 peli 10
-    camion.cargar(bumblebee) //peso 800 peli 30
-    camion.cargar(arenaAGranel) //peso 2 peli 1
+    camion.cargar(knightRider) //peli 10
+    camion.cargar(bumblebee) //peli 30
+    camion.cargar(arenaAGranel) //peli 1
 
     assert.equals(bumblebee, camion.elDeNivel(30))
     assert.equals(#{knightRider, bumblebee}, camion.objetosQueSuperanPeligrosidad(7))
@@ -46,6 +48,8 @@ describe "camion" {
   }
 
   test "cambios" {
+
+    assert.equals(5, paqueteDeLadrillos.cantidadLadrillos())
 
     camion.cargar(paqueteDeLadrillos)
     camion.cargar(arenaAGranel)
