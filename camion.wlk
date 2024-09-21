@@ -1,10 +1,11 @@
 import cosas.*
 
 object camion {
-	const cosas = #{}
+	const property cosas = #{}
 		
 	method cargar(unaCosa) {
 		cosas.add(unaCosa)
+		unaCosa.cambio()
 	} 
 
 	method descargar(cosa) {
@@ -62,7 +63,7 @@ object camion {
 	}
 
 	method objetosMasPeligrososQue(cosa) {
-	  return self.objetosQueSuperanPeligrosidad(cosa.nivelPeligrosidad())
+	  return self.objetosQueSuperanPeligrosidad(cosa.nivelPeligrosidad()).asSet()
 	}
 
 	method puedeCircularEnRuta(nivelMaximoPeligrosidad) {
@@ -74,4 +75,49 @@ object camion {
 	}
 
 	//agregados
+	method tieneAlgoQuePesaEntre(min, max) {
+	  return cosas.any({cosa => self.pesaEntre(cosa,min,max)})
+	}
+
+	method pesaEntre(cosa,min,max) {
+	  return cosa.peso() >= min and cosa.peso() <= max
+	}
+
+	method cosaMasPesada() {
+	  return cosas.max({cosa => cosa.peso()})
+	}
+
+	method pesos() {
+	  return cosas.map({cosa => cosa.peso()}).asSet() //el as set es para probarlo
+	}
+
+	method totalBultos() {
+	  return cosas.sum({cosa => cosa.bultos()})
+	}
+
+	method transportar(destino, camino) {
+	  
+	}
+}
+
+//almacen y viaje
+object almacen {
+  const property cosasAlmacenadas = #{}
+  var property almacenamientoDisponible = 4
+
+  method almacenar(cosa) {
+	self.validarAlmacenamiento()
+	cosasAlmacenadas.add(cosa)
+  }
+
+  method validarAlmacenamiento(){}
+
+}
+
+object ruta9 {
+  
+}
+
+object caminosVecinales {
+  
 }

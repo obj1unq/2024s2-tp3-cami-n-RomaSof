@@ -14,19 +14,32 @@ describe "cosas" {
     
     assert.equals(100, bateriaAntiaerea.nivelPeligrosidad() )
 
+    assert.equals(2, bateriaAntiaerea.bultos())
+
     bateriaAntiaerea.estaConMisiles(false)
 
     assert.equals(0, bateriaAntiaerea.nivelPeligrosidad() )
+
+    assert.equals(1, bateriaAntiaerea.bultos())
+
+
   }
 
   test "contenedorPortuario" {
     
-    contenedorPortuario.agregar(paqueteDeLadrillos)
-    contenedorPortuario.agregar(arenaAGranel)
+    contenedorPortuario.agregar(paqueteDeLadrillos) //1 bulto
+    contenedorPortuario.agregar(arenaAGranel) //1
 
     assert.equals(paqueteDeLadrillos, contenedorPortuario.cosaMasPeligrosa())
     assert.equals(2, contenedorPortuario.nivelPeligrosidad())
     assert.equals(12, contenedorPortuario.pesoTotalCarga())
+
+    assert.equals(3, contenedorPortuario.bultos())
+
+    contenedorPortuario.cambio()
+
+    assert.equals(17, paqueteDeLadrillos.cantidadLadrillos())
+    assert.equals(22, arenaAGranel.peso())
 
   }
 
@@ -34,6 +47,18 @@ describe "cosas" {
     
     assert.equals(100, embalajeDeSeguridad.peso())
     assert.equals(100, embalajeDeSeguridad.nivelPeligrosidad())
+
+  }
+
+  test "paquete de ladrillos" {
+    
+    assert.equals(1, paqueteDeLadrillos.bultos())
+
+    paqueteDeLadrillos.cantidadLadrillos(101)
+    assert.equals(2, paqueteDeLadrillos.bultos())
+
+    paqueteDeLadrillos.cantidadLadrillos(301)
+    assert.equals(3, paqueteDeLadrillos.bultos())
 
   }
 }
