@@ -100,15 +100,19 @@ object camion {
 	}
 
 	//transporte
-	method transportar(destino, camino) {
-	  self.valirdarTransportar(destino, camino)
+	method transportar(destino, camino){ //, nivelMaximoPeligrosidad) 
+	  self.valirdarTransportar(destino, camino)// , nivelMaximoPeligrosidad)
 	  destino.almacenar(cosas, self.totalBultos())
 	}
 
-	method valirdarTransportar(destino, camino){
-	  if( not self.puedeCircularEnRuta(camino.nivelPeligrosidad()) and not self.sePuedeAlmacenarEn(destino) ) {
+	method valirdarTransportar(destino, camino, nivelMaximoPeligrosidad){
+	  if( not self.puedePasarPor(camino /*, nivelMaximoPeligrosidad*/)  and not self.sePuedeAlmacenarEn(destino) ) {
 		self.error("no se puede almacenar la carga en" + destino)
 	   }
+	}
+
+	method puedePasarPor(camino) { //, nivelMaximoPeligrosidad) 
+		return camino.dejaCircular(self.puedeCircularEnRuta(camino.nivelPeligrosidad() /*nivelMaximoPeligrosidad*/), self.pesoTotal())
 	}
 
 	method sePuedeAlmacenarEn(destino) {
@@ -143,9 +147,15 @@ object almacen {
 object ruta9 {
   method nivelPeligrosidad() { return 11 }
   method pesoMaximoSoportable() { return 2500 }
+  method dejaCircular(esCamionSeguro, pesoCamion) {
+	return esCamionSeguro
+  }
 }
 
 object caminosVecinales {
 	var property pesoMaximoSoportable = 2500
-  method nivelPeligrosidad() { return 0 }
+  method nivelPeligrosidad() { return 0 } //asumo que es cero porque no dice la consigna y quiero mantener el polimorfismo
+  method dejaCircular(esCamionSeguro, pesoCamion) {
+	return pesoCamion <= pesoMaximoSoportable
+  }
 }
