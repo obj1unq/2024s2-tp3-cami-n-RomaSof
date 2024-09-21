@@ -96,29 +96,53 @@ object camion {
 	  return cosas.sum({cosa => cosa.bultos()})
 	}
 
+	//transporte
 	method transportar(destino, camino) {
-	  
+	  self.valirdarTransportar(destino, camino)
+	  destino.almacenar(cosas, self.totalBultos())
+	}
+
+	method valirdarTransportar(destino, camino){
+	  if( not self.puedeCircularEnRuta(camino.nivelPeligrosidad()) and not self.sePuedeAlmacenarEn(destino) ) {
+		self.error("no se puede almacenar la carga en" + destino)
+	   }
+	}
+
+	method sePuedeAlmacenarEn(destino) {
+	  return destino.sePuedeAlmacenar(cosas)
 	}
 }
 
 //almacen y viaje
 object almacen {
   const property cosasAlmacenadas = #{}
-  var property almacenamientoDisponible = 4
+  var property cantidadDeBultosDisponible = 3 //como en el ejemplo
 
-  method almacenar(cosa) {
-	self.validarAlmacenamiento()
-	cosasAlmacenadas.add(cosa)
+  method almacenar(cosas, bultoCosas) {
+	self.validarAlmacenar(cosas, bultoCosas)
+	cosasAlmacenadas.addAll(cosas)
+	cantidadDeBultosDisponible = cantidadDeBultosDisponible - bultoCosas
   }
 
-  method validarAlmacenamiento(){}
+  method validarAlmacenar(cosas, bultoCosas){
+	return 
+	if(not self.sePuedeAlmacenar(cosas, bultoCosas)){
+		self.error("no hay suficiente espacio para almacenar" + cosas)
+	}
+  }
+
+  method sePuedeAlmacenar(cosas, bultoCosas) {
+	return cantidadDeBultosDisponible >= bultoCosas
+  }
 
 }
 
 object ruta9 {
-  
+  method nivelPeligrosidad() { return 11 }
+  method pesoMaximoSoportable() { return 2500 }
 }
 
 object caminosVecinales {
-  
+	var property pesoMaximoSoportable = 2500
+  method nivelPeligrosidad() { return 0 }
 }
