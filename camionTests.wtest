@@ -1,0 +1,81 @@
+import cosas.*
+import camion.*
+
+describe "camion" {
+  test "cargas y pesos" {
+
+    camion.cargar(knightRider) //peso 500 
+    camion.cargar(arenaAGranel) //peso 22
+
+    assert.equals(500, knightRider.peso())
+    assert.equals(22, arenaAGranel.peso())
+
+    assert.that(camion.todoPesoPar())
+    assert.that(camion.hayAlgunoQuePesa(500))
+    assert.notThat(camion.hayAlgunoQuePesa(5))
+    assert.equals(1522, camion.pesoTotal())
+    assert.equals(522, camion.pesoTotalCarga())
+    assert.notThat(camion.excedidoDePeso())
+
+    //agregados
+    assert.that(camion.tieneAlgoQuePesaEntre(1, 25))
+    assert.equals(knightRider, camion.cosaMasPesada())
+    assert.equals(#{500, 22}, camion.pesos()) //set
+  }
+
+  test "cargas y niveles de peligrosidad" {
+    
+    camion.cargar(knightRider) //peli 10
+    camion.cargar(bumblebee) //peli 30
+    camion.cargar(arenaAGranel) //peli 1
+
+    assert.equals(bumblebee, camion.elDeNivel(30))
+    assert.equals(#{knightRider, bumblebee}, camion.objetosQueSuperanPeligrosidad(7))
+    assert.that(camion.superaNivelPeligrosidad(bumblebee, 15))
+    assert.equals(#{bumblebee}, camion.objetosMasPeligrososQue(knightRider))
+    assert.that(camion.puedeCircularEnRuta(40))
+    assert.notThat(camion.puedeCircularEnRuta(20))
+  }
+
+  test "cargas y bultos" {
+    
+    camion.cargar(knightRider) //1 bulto
+    camion.cargar(bumblebee) //2 bultos
+    camion.cargar(arenaAGranel) //1 bulto
+
+    assert.equals(4, camion.totalBultos())
+
+  }
+
+  test "cambios" {
+
+    assert.equals(5, paqueteDeLadrillos.cantidadLadrillos())
+
+    camion.cargar(paqueteDeLadrillos)
+    camion.cargar(arenaAGranel)
+
+    assert.equals(17, paqueteDeLadrillos.cantidadLadrillos())
+    assert.equals(22, arenaAGranel.peso())
+
+  }
+
+  test "trasporte no puede" {
+    
+    camion.cargar(bumblebee)
+    camion.cargar(knightRider)
+    almacen.almacenar(#{arenaAGranel})
+    
+    assert.throwsException({ camion.transportar(almacen, ruta9) })
+  }
+
+  test "transporte si puede" {
+    almacen.almacenar(#{arenaAGranel}) //1
+    camion.cargar(bumblebee) //2
+    camion.transportar(almacen, caminosVecinales)
+
+    assert.equals(0, almacen.cantidadDeBultosDisponible())
+    assert.that(almacen.contiene(bumblebee))
+  }
+
+}
+
