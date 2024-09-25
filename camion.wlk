@@ -151,16 +151,16 @@ object almacen {
 }
 
 object ruta9 {
+	var property nivelPeligrosidadSoportado  = 2500
   method nivelPeligrosidad() { return 11 }
-  method nivelPeligrosidadSoportado() { return 2500 }
   method puedeCircular(transporte) {
-	return transporte.puedeCircularEnRuta(self.nivelPeligrosidad())
+	return transporte.puedeCircularEnRuta(nivelPeligrosidadSoportado)
   }
 }
 
 object caminosVecinales {
-	var property nivelPeligrosidadSoportado = 2500
+	var property pesoMaximoSoportable = 2500
   method puedeCircular(transporte) {
-	return transporte.pesoTotal() <= nivelPeligrosidadSoportado
+	return transporte.pesoTotal() <= pesoMaximoSoportable
   }
 }
