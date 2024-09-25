@@ -2,19 +2,25 @@ object knightRider {
 	method peso() { return 500 }
 	method nivelPeligrosidad() { return 10 }
 	method bultos() { return 1 }
-	method cambio() {}
+	method cambiar() {}
 }
 
 object bumblebee {
-	var property estaTransformado =  true
+	var estaTransformadoEnRobot =  true
 	method peso() { return 800 }
   	method nivelPeligrosidad() { 
 		const peso = 30
 		return
-		if (estaTransformado){ peso } else peso / 2
+		if (estaTransformadoEnRobot){ peso } else peso / 2
   }
   method bultos() { return 2 }
-  method cambio() { estaTransformado = true }
+  method cambiar() { estaTransformadoEnRobot = true }
+  method transormarEnRobot() {
+	estaTransformadoEnRobot = true
+  }
+  method transformarEnAuto() {
+	estaTransformadoEnRobot = false
+  }
 }
 
 object paqueteDeLadrillos {
@@ -27,18 +33,18 @@ object paqueteDeLadrillos {
 	if(cantidadLadrillos <= 100){ 1 } else if (cantidadLadrillos > 100 and cantidadLadrillos < 300){ 2 } else{ 3 }
   }
   /*Paquete de ladrillos es 1 hasta 100 ladrillos, 2 de 101 a 300, 3 301 o más*/
-  method cambio() { cantidadLadrillos += 12 }
+  method cambiar() { cantidadLadrillos += 12 }
 }
 
 object arenaAGranel {
 	var property peso = 2
 	method nivelPeligrosidad() { return 1 }
 	method bultos() { return 1 }
-	method cambio() { peso += 20 }
+	method cambiar() { peso += 20 }
 }
 
 object bateriaAntiaerea {
-  var property estaConMisiles = true
+  var estaConMisiles = true
   method peso() { 
 	const peso = 300
 	return
@@ -48,7 +54,13 @@ object bateriaAntiaerea {
 
    method bultos() { return if (estaConMisiles){2} else {1} }
    /*Batería antiaérea: 1 si no tiene misiles, 2 si tiene.*/
-   method cambio() { estaConMisiles = true }
+   method cambiar() { estaConMisiles = true }
+   method cargarMisiles() {
+	 estaConMisiles = true
+   }
+   method quitarMisiles() {
+	 estaConMisiles = false
+   }
 }
 
 object contenedorPortuario {
@@ -75,8 +87,8 @@ object contenedorPortuario {
 	  return cosas.sum({cosa => cosa.bultos()})
 	}
 
-	method cambio() { 
-		cosas.forEach({cosa => cosa.cambio()}) //acá estaría bien? es una accion sobre todos los elementos y sin consulta
+	method cambiar() { 
+		cosas.forEach({cosa => cosa.cambiar()}) //acá estaría bien? es una accion sobre todos los elementos y sin consulta
 	 }
 }
 
@@ -84,7 +96,7 @@ object residuosRadioactivos {
 	var property peso = 100
 	method nivelPeligrosidad() { return 200 }
 	method bultos() { return 1 }
-	method cambio() { peso += 15 }
+	method cambiar() { peso += 15 }
 }
 
 object embalajeDeSeguridad {
@@ -92,5 +104,5 @@ object embalajeDeSeguridad {
   method peso() { return cubre.peso() }
   method nivelPeligrosidad() { return cubre.nivelPeligrosidad() /2 }
   method bultos() { return 2 }
-  method cambio() {}
+  method cambiar() {}
 }

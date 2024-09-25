@@ -3,10 +3,10 @@ import cosas.*
 object camion {
 	const property cosas = #{}
 		
-	method cargar(unaCosa) {
-		cosas.add(unaCosa)
-		//cosas.forEach({cosa => cosa.cambio()}) -> estaría bien usar un foreach acá porque NO hay consulta y es solo accion?
-		unaCosa.cambio()
+	method cargar(cosa) {
+		cosas.add(cosa)
+		//cosas.forEach({cosa => cosa.cambio()}) -> no estaría bien! porque haría que cada vez que se agrega UNA ÚNICA cosa, TODAS se modifiquen nuevamente! El requerimiento pide que ser cargado se modifique la cosa que es cargada, y este es el único método que puede tener esa responsabilidad.
+		cosa.cambiar()
 	} 
 
 	method descargar(cosa) {
@@ -14,19 +14,20 @@ object camion {
 	}
 
 	method todoPesoPar() {
-	  return  not cosas.isEmpty() and cosas.all({cosa => self.esPar(cosa.peso())})
+	  return cosas.all({cosa => self.esPar(cosa.peso())})
+	  //"all" por defecto si no tiene elementos todos cumplen la condición dada! Lo mismo el any.
 	}
 
-	method esPar(numero) {
-	  return (numero / 2).isInteger()
+	method esPar(peso) {
+	  return peso.even() //pregunta ya si es par el peso 
 	}
 
 	method hayAlgunoQuePesa(peso) {
-	  return not cosas.isEmpty() and cosas.any({cosa => cosa.peso() == peso})
+	  return cosas.any({cosa => cosa.peso() == peso})
 	}
 
 	method elDeNivel(nivel) {
-		//no se si validarlo para que no falle
+		// el find falla por defecto si no existe alguno que cumpla
 	  return cosas.find({cosa => cosa.nivelPeligrosidad() == nivel})
 	}
 
@@ -39,16 +40,12 @@ object camion {
 	}
 
 	method pesoTotalCarga(){
-		//aca también fallaría si le pasan una lista vacia, validar?
+		//el sum por defecto empieza con 0 y luego si todos los objetos o los bloques producen un número los suma al resultado 0 inicial. o sea no fallaría
 		return cosas.sum({cosa => cosa.peso()})
 		
+	//el forEach es solo para ordenes, estaría mal usarlo acá
 	/*
-		var peso = 0
-		cosas.forEach({cosa => peso = peso + cosa.peso()})
-		return peso -> estaría mal porque hay una consulta ?
-	*/
-	/*
-		return cosas.map({cosa => cosa.peso()}).sum() -> otra forma de hacerlo que no estaría mal creo
+		return cosas.map(cosa => cosa.peso()).sum() -> otra forma de hacerlo que no estaría mal
 	*/
 	}
 
@@ -69,11 +66,12 @@ object camion {
 	}
 
 	method objetosMasPeligrososQue(cosa) {
-	  return self.objetosQueSuperanPeligrosidad(cosa.nivelPeligrosidad()).asSet()
+	  return self.objetosQueSuperanPeligrosidad(cosa.nivelPeligrosidad()) //ya devuelve set
 	}
 
 	method puedeCircularEnRuta(nivelMaximoPeligrosidad) {
 	  return not self.excedidoDePeso() and self.ningunoSuperaPeligrosidad(nivelMaximoPeligrosidad)
+	  // no está bueno hacer métodos que devuelvan una "negación" siempre es más práctico pensarlos como afirmaciones y luego negarlo de ser necesario.
 	}
 
 	method ningunoSuperaPeligrosidad(nivelMaximoPeligrosidad) {
@@ -86,7 +84,7 @@ object camion {
 	}
 
 	method pesaEntre(cosa,min,max) {
-	  return cosa.peso() >= min and cosa.peso() <= max
+	  return cosa.peso().between(min,max)
 	}
 
 	method cosaMasPesada() {
@@ -94,7 +92,7 @@ object camion {
 	}
 
 	method pesos() {
-	  return cosas.map({cosa => cosa.peso()}).asSet() //el as set es para probarlo
+	  return cosas.map({cosa => cosa.peso()}).asSet() //el as set es porque todo es set 
 	}
 
 	method totalBultos() {
@@ -103,22 +101,16 @@ object camion {
 
 	//transporte
 	method transportar(destino, camino){ 
-	  self.valirdarTransportar(destino, camino)
+	  self.validarTransportar(destino, camino)
 	  destino.almacenar(cosas)
 	}
 
-	method valirdarTransportar(destino, camino){
-	  if( not self.puedePasarPor(camino)  and not self.sePuedeAlmacenarEn(destino) ) {
+	method validarTransportar(destino, camino){
+	  if( self.excedidoDePeso() and not camino.puedeCircular(self) ) {
+		//el ver si entra en el almacen lo valida el almacen
 		self.error("no se puede valir el transporte")
 	   }
-	}
-
-	method puedePasarPor(camino) {
-		return camino.dejaCircular(self)
-	}
-
-	method sePuedeAlmacenarEn(destino) {
-	  return destino.sePuedeAlmacenar(cosas)
+	   //conviene delegar la validacion al querer guardar la carga igual
 	}
 }
 
@@ -133,11 +125,18 @@ object almacen {
 	cantidadDeBultosDisponible = cantidadDeBultosDisponible - self.bultosOcupaCosas(cosas)
   }
 
+  method contiene(cosa) {
+	return cosasAlmacenadas.contains(cosa)
+  }
+
   method validarAlmacenar(cosas){
-	return 
 	if(not self.sePuedeAlmacenar(cosas)){
-		self.error("no hay suficiente espacio para almacenar" + cosas)
+		self.error("no hay suficiente espacio para almacenar")
 	}
+	//OTROS MENSAJES:
+	//"Hay " + self.bultosDisponibles() + " bulto/s disponible/s, pero se requieren " + bultos 
+	//"Hay " + self.bultosDisponibles() + " bulto/s disponible/s, pero se requieren " + camion.totalBultos()
+
   }
 
   method sePuedeAlmacenar(cosas) {
@@ -147,21 +146,21 @@ object almacen {
   method bultosOcupaCosas(cosas) {
 	return cosas.sum({cosa => cosa.bultos()})
   }
+  //Esté código ya lo hace el camión. En este caso igual no está tan mal por si se pasase otro transporte que no tiene el totalBultos(), pero lo mejor hasta este punto sería reutilizar el código.
 
 }
 
 object ruta9 {
   method nivelPeligrosidad() { return 11 }
-  method pesoMaximoSoportable() { return 2500 }
-  method dejaCircular(transporte) {
+  method nivelPeligrosidadSoportado() { return 2500 }
+  method puedeCircular(transporte) {
 	return transporte.puedeCircularEnRuta(self.nivelPeligrosidad())
   }
 }
 
 object caminosVecinales {
-	var property pesoMaximoSoportable = 2500
-  method nivelPeligrosidad() { return 0 } //asumo que es cero porque no dice la consigna y quiero mantener el polimorfismo
-  method dejaCircular(transporte) {
-	return transporte.pesoTotal() <= pesoMaximoSoportable
+	var property nivelPeligrosidadSoportado = 2500
+  method puedeCircular(transporte) {
+	return transporte.pesoTotal() <= nivelPeligrosidadSoportado
   }
 }

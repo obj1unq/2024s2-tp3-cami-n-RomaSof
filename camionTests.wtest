@@ -69,11 +69,12 @@ describe "camion" {
   }
 
   test "transporte si puede" {
-    camion.cargar(bumblebee) //2
     almacen.almacenar(#{arenaAGranel}) //1
+    camion.cargar(bumblebee) //2
     camion.transportar(almacen, caminosVecinales)
 
     assert.equals(0, almacen.cantidadDeBultosDisponible())
+    assert.that(almacen.contiene(bumblebee))
   }
 
 }

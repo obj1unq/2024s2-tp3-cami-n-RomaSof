@@ -5,7 +5,7 @@ describe "cosas" {
     
     assert.equals(30, bumblebee.nivelPeligrosidad())
 
-    bumblebee.estaTransformado(false)
+    bumblebee.transformarEnAuto()
 
     assert.equals(15, bumblebee.nivelPeligrosidad())
   }
@@ -16,7 +16,7 @@ describe "cosas" {
 
     assert.equals(2, bateriaAntiaerea.bultos())
 
-    bateriaAntiaerea.estaConMisiles(false)
+    bateriaAntiaerea.quitarMisiles()
 
     assert.equals(0, bateriaAntiaerea.nivelPeligrosidad() )
 
@@ -36,14 +36,14 @@ describe "cosas" {
 
     assert.equals(3, contenedorPortuario.bultos())
 
-    contenedorPortuario.cambio()
+    contenedorPortuario.cambiar()
 
     assert.equals(17, paqueteDeLadrillos.cantidadLadrillos())
     assert.equals(22, arenaAGranel.peso())
 
   }
 
-  test "embalajeDeSeguridad" {
+  test "embalajeDeSeguridad, la cosa que envuelve da lo esperado" {
     
     assert.equals(100, embalajeDeSeguridad.peso())
     assert.equals(100, embalajeDeSeguridad.nivelPeligrosidad())
