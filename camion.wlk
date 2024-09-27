@@ -1,11 +1,11 @@
 import cosas.*
 
-object camion {
+class Camion {
 	const property cosas = #{}
+	const tara = null
 		
 	method cargar(cosa) {
 		cosas.add(cosa)
-		//cosas.forEach({cosa => cosa.cambio()}) -> no estaría bien! porque haría que cada vez que se agrega UNA ÚNICA cosa, TODAS se modifiquen nuevamente! El requerimiento pide que ser cargado se modifique la cosa que es cargada, y este es el único método que puede tener esa responsabilidad.
 		cosa.cambiar()
 	} 
 
@@ -15,11 +15,10 @@ object camion {
 
 	method todoPesoPar() {
 	  return cosas.all({cosa => self.esPar(cosa.peso())})
-	  //"all" por defecto si no tiene elementos todos cumplen la condición dada! Lo mismo el any.
 	}
 
 	method esPar(peso) {
-	  return peso.even() //pregunta ya si es par el peso 
+	  return peso.even()
 	}
 
 	method hayAlgunoQuePesa(peso) {
@@ -27,26 +26,15 @@ object camion {
 	}
 
 	method elDeNivel(nivel) {
-		// el find falla por defecto si no existe alguno que cumpla
 	  return cosas.find({cosa => cosa.nivelPeligrosidad() == nivel})
 	}
 
 	method pesoTotal() {
-	  return self.tara() + self.pesoTotalCarga()
-	}
-
-	method tara() {
-	  return 1000
+	  return tara + self.pesoTotalCarga()
 	}
 
 	method pesoTotalCarga(){
-		//el sum por defecto empieza con 0 y luego si todos los objetos o los bloques producen un número los suma al resultado 0 inicial. o sea no fallaría
 		return cosas.sum({cosa => cosa.peso()})
-		
-	//el forEach es solo para ordenes, estaría mal usarlo acá
-	/*
-		return cosas.map(cosa => cosa.peso()).sum() -> otra forma de hacerlo que no estaría mal
-	*/
 	}
 
 	method excedidoDePeso() {
@@ -58,11 +46,7 @@ object camion {
 	}
 
 	method objetosQueSuperanPeligrosidad(nivel) {
-	  return cosas.filter({cosa => self.superaNivelPeligrosidad(cosa, nivel)})
-	}
-
-	method superaNivelPeligrosidad(cosa, nivel) {
-	  return cosa.nivelPeligrosidad() > nivel
+	  return cosas.filter({cosa => cosa.nivelPeligrosidad() > nivel})
 	}
 
 	method objetosMasPeligrososQue(cosa) {
@@ -71,7 +55,6 @@ object camion {
 
 	method puedeCircularEnRuta(nivelMaximoPeligrosidad) {
 	  return not self.excedidoDePeso() and self.ningunoSuperaPeligrosidad(nivelMaximoPeligrosidad)
-	  // no está bueno hacer métodos que devuelvan una "negación" siempre es más práctico pensarlos como afirmaciones y luego negarlo de ser necesario.
 	}
 
 	method ningunoSuperaPeligrosidad(nivelMaximoPeligrosidad) {
@@ -92,7 +75,7 @@ object camion {
 	}
 
 	method pesos() {
-	  return cosas.map({cosa => cosa.peso()}).asSet() //el as set es porque todo es set 
+	  return cosas.map({cosa => cosa.peso()}).asSet()
 	}
 
 	method totalBultos() {
@@ -113,6 +96,8 @@ object camion {
 	   //conviene delegar la validacion al querer guardar la carga igual
 	}
 }
+
+const camion = new Camion( cosas = #{}, tara = 1000 ) 
 
 //almacen y viaje
 object almacen {
